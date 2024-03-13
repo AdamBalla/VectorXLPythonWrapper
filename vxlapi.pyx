@@ -1,6 +1,7 @@
 # *-* encoding: utf-8 *-*
 
 from libc.string cimport memset
+from libc.string cimport memcpy
 from libc.stdlib cimport malloc, free
 
 
@@ -169,17 +170,11 @@ cdef extern from "vxlapi.h":
     int _XL_ERR_EDL_NOT_SET                "XL_ERR_EDL_NOT_SET"
     int _XL_ERR_UNKNOWN_FLAG               "XL_ERR_UNKNOWN_FLAG"
     int _XL_ERR_ETH_PHY_ACTIVATION_FAILED  "XL_ERR_ETH_PHY_ACTIVATION_FAILED"
-    int _XL_ERR_ETH_MAC_RESET_FAILED       "XL_ERR_ETH_MAC_RESET_FAILED"
-    int _XL_ERR_ETH_MAC_NOT_READY          "XL_ERR_ETH_MAC_NOT_READY"
     int _XL_ERR_ETH_PHY_CONFIG_ABORTED     "XL_ERR_ETH_PHY_CONFIG_ABORTED"
     int _XL_ERR_ETH_RESET_FAILED           "XL_ERR_ETH_RESET_FAILED"
     int _XL_ERR_ETH_SET_CONFIG_DELAYED     "XL_ERR_ETH_SET_CONFIG_DELAYED"
     int _XL_ERR_ETH_UNSUPPORTED_FEATURE    "XL_ERR_ETH_UNSUPPORTED_FEATURE"
     int _XL_ERR_ETH_MAC_ACTIVATION_FAILED  "XL_ERR_ETH_MAC_ACTIVATION_FAILED"
-    int _XL_ERR_ETH_FILTER_INVALID         "XL_ERR_ETH_FILTER_INVALID"
-    int _XL_ERR_ETH_FILTER_UNAVAILABLE     "XL_ERR_ETH_FILTER_UNAVAILABLE"
-    int _XL_ERR_ETH_FILTER_NO_INIT_ACCESS  "XL_ERR_ETH_FILTER_NO_INIT_ACCESS"
-    int _XL_ERR_ETH_FILTER_TOO_COMPLEX     "XL_ERR_ETH_FILTER_TOO_COMPLEX"
 
     int _XL_ACTIVATE_NONE         "XL_ACTIVATE_NONE"
     int _XL_ACTIVATE_RESET_CLOCK  "XL_ACTIVATE_RESET_CLOCK"
@@ -209,6 +204,174 @@ cdef extern from "vxlapi.h":
     int _XL_CAN_TXMSG_FLAG_WAKEUP        "XL_CAN_TXMSG_FLAG_WAKEUP"
 
     unsigned short _XL_CAN_EV_TAG_TX_MSG "XL_CAN_EV_TAG_TX_MSG"
+
+    int _XL_FR_MODE_NORMAL                           "XL_FR_MODE_NORMAL"
+    int _XL_FR_MODE_COLD_NORMAL                      "XL_FR_MODE_COLD_NORMAL"
+
+    int _XL_FR_MODE_NONE                             "XL_FR_MODE_NONE"
+    int _XL_FR_MODE_WAKEUP                           "XL_FR_MODE_WAKEUP"
+    int _XL_FR_MODE_COLDSTART_LEADING                "XL_FR_MODE_COLDSTART_LEADING"
+    int _XL_FR_MODE_COLDSTART_FOLLOWING              "XL_FR_MODE_COLDSTART_FOLLOWING"
+    int _XL_FR_MODE_WAKEUP_AND_COLDSTART_LEADING     "XL_FR_MODE_WAKEUP_AND_COLDSTART_LEADING"
+    int _XL_FR_MODE_WAKEUP_AND_COLDSTART_FOLLOWING   "XL_FR_MODE_WAKEUP_AND_COLDSTART_FOLLOWING"
+
+    int _XL_FR_CHANNEL_CFG_STATUS_INIT_APP_PRESENT   "XL_FR_CHANNEL_CFG_STATUS_INIT_APP_PRESENT"
+    int _XL_FR_CHANNEL_CFG_STATUS_CHANNEL_ACTIVATED  "XL_FR_CHANNEL_CFG_STATUS_CHANNEL_ACTIVATED"
+    int _XL_FR_CHANNEL_CFG_STATUS_VALID_CFG_MODE     "XL_FR_CHANNEL_CFG_STATUS_VALID_CFG_MODE"
+
+    int _XL_FR_CHANNEL_CFG_MODE_SYNCHRONOUS          "XL_FR_CHANNEL_CFG_MODE_SYNCHRONOUS"
+    int _XL_FR_CHANNEL_CFG_MODE_COMBINED             "XL_FR_CHANNEL_CFG_MODE_COMBINED"
+    int _XL_FR_CHANNEL_CFG_MODE_ASYNCHRONOUS         "XL_FR_CHANNEL_CFG_MODE_ASYNCHRONOUS"
+
+    int _XL_FR_FILTER_PASS                           "XL_FR_FILTER_PASS"                           
+    int _XL_FR_FILTER_BLOCK                          "XL_FR_FILTER_BLOCK"                          
+
+    int _XL_FR_FILTER_TYPE_DATA                      "XL_FR_FILTER_TYPE_DATA"                      
+    int _XL_FR_FILTER_TYPE_NF                        "XL_FR_FILTER_TYPE_NF"                        
+    int _XL_FR_FILTER_TYPE_FILLUP_NF                 "XL_FR_FILTER_TYPE_FILLUP_NF"                 
+
+    int _XL_FR_FILTER_CHANNEL_A                      "XL_FR_FILTER_CHANNEL_A"                      
+    int _XL_FR_FILTER_CHANNEL_B                      "XL_FR_FILTER_CHANNEL_B"                      
+
+    int _XL_FR_START_CYCLE                           "XL_FR_START_CYCLE"                           
+    int _XL_FR_RX_FRAME                              "XL_FR_RX_FRAME"                              
+    int _XL_FR_TX_FRAME                              "XL_FR_TX_FRAME"                              
+    #int _XL_FR_TXACK_FRAME                           "XL_FR_TXACK_FRAME"                           
+    #int _XL_FR_INVALID_FRAME                         "XL_FR_INVALID_FRAME"                         
+    int _XL_FR_WAKEUP                                "XL_FR_WAKEUP"                                
+    int _XL_FR_SYMBOL_WINDOW                         "XL_FR_SYMBOL_WINDOW"                         
+    int _XL_FR_ERROR                                 "XL_FR_ERROR"                                 
+    int _XL_FR_STATUS                                "XL_FR_STATUS"                                
+    int _XL_FR_NM_VECTOR                             "XL_FR_NM_VECTOR"                             
+    int _XL_FR_TRANCEIVER_STATUS                     "XL_FR_TRANCEIVER_STATUS"                     
+    int _XL_FR_SPY_FRAME                             "XL_FR_SPY_FRAME"                             
+    int _XL_FR_SPY_SYMBOL                            "XL_FR_SPY_SYMBOL"                            
+
+    int _XL_FR_CHANNEL_A                             "XL_FR_CHANNEL_A"                             
+    int _XL_FR_CHANNEL_B                             "XL_FR_CHANNEL_B"                             
+    int _XL_FR_CHANNEL_AB                            "XL_FR_CHANNEL_AB"                            
+    int _XL_FR_SPY_CHANNEL_A                         "XL_FR_SPY_CHANNEL_A"                         
+    int _XL_FR_SPY_CHANNEL_B                         "XL_FR_SPY_CHANNEL_B"                         
+    int _XL_FR_CC_COLD_A                             "XL_FR_CC_COLD_A"                             
+    int _XL_FR_CC_COLD_B                             "XL_FR_CC_COLD_B"                             
+    int _XL_FR_QUEUE_OVERFLOW                        "XL_FR_QUEUE_OVERFLOW"                        
+
+    int _XL_FR_FRAMEFLAG_STARTUP                     "XL_FR_FRAMEFLAG_STARTUP"                     
+    int _XL_FR_FRAMEFLAG_SYNC                        "XL_FR_FRAMEFLAG_SYNC"                        
+    int _XL_FR_FRAMEFLAG_NULLFRAME                   "XL_FR_FRAMEFLAG_NULLFRAME"                   
+    int _XL_FR_FRAMEFLAG_PAYLOAD_PREAMBLE            "XL_FR_FRAMEFLAG_PAYLOAD_PREAMBLE"            
+    int _XL_FR_FRAMEFLAG_FR_RESERVED                 "XL_FR_FRAMEFLAG_FR_RESERVED"                 
+    int _XL_FR_FRAMEFLAG_REQ_TXACK                   "XL_FR_FRAMEFLAG_REQ_TXACK"                   
+    int _XL_FR_FRAMEFLAG_TXACK_SS                    "XL_FR_FRAMEFLAG_TXACK_SS"                    
+    int _XL_FR_FRAMEFLAG_RX_UNEXPECTED               "XL_FR_FRAMEFLAG_RX_UNEXPECTED"               
+    int _XL_FR_FRAMEFLAG_NEW_DATA_TX                 "XL_FR_FRAMEFLAG_NEW_DATA_TX"                 
+    int _XL_FR_FRAMEFLAG_DATA_UPDATE_LOST            "XL_FR_FRAMEFLAG_DATA_UPDATE_LOST"            
+    int _XL_FR_FRAMEFLAG_SYNTAX_ERROR                "XL_FR_FRAMEFLAG_SYNTAX_ERROR"                
+    int _XL_FR_FRAMEFLAG_CONTENT_ERROR               "XL_FR_FRAMEFLAG_CONTENT_ERROR"               
+    int _XL_FR_FRAMEFLAG_SLOT_BOUNDARY_VIOLATION     "XL_FR_FRAMEFLAG_SLOT_BOUNDARY_VIOLATION"     
+    int _XL_FR_FRAMEFLAG_TX_CONFLICT                 "XL_FR_FRAMEFLAG_TX_CONFLICT"                 
+    int _XL_FR_FRAMEFLAG_EMPTY_SLOT                  "XL_FR_FRAMEFLAG_EMPTY_SLOT"                  
+    int _XL_FR_FRAMEFLAG_FRAME_TRANSMITTED           "XL_FR_FRAMEFLAG_FRAME_TRANSMITTED"           
+
+    int _XL_FR_SPY_FRAMEFLAG_FRAMING_ERROR           "XL_FR_SPY_FRAMEFLAG_FRAMING_ERROR"           
+    int _XL_FR_SPY_FRAMEFLAG_HEADER_CRC_ERROR        "XL_FR_SPY_FRAMEFLAG_HEADER_CRC_ERROR"        
+    int _XL_FR_SPY_FRAMEFLAG_FRAME_CRC_ERROR         "XL_FR_SPY_FRAMEFLAG_FRAME_CRC_ERROR"         
+    int _XL_FR_SPY_FRAMEFLAG_BUS_ERROR               "XL_FR_SPY_FRAMEFLAG_BUS_ERROR"               
+
+    int _XL_FR_TX_MODE_CYCLIC                        "XL_FR_TX_MODE_CYCLIC"                        
+    int _XL_FR_TX_MODE_SINGLE_SHOT                   "XL_FR_TX_MODE_SINGLE_SHOT"                   
+    int _XL_FR_TX_MODE_NONE                          "XL_FR_TX_MODE_NONE"                          
+
+    int _XL_FR_PAYLOAD_INCREMENT_8BIT                "XL_FR_PAYLOAD_INCREMENT_8BIT"                
+    int _XL_FR_PAYLOAD_INCREMENT_16BIT               "XL_FR_PAYLOAD_INCREMENT_16BIT"               
+    int _XL_FR_PAYLOAD_INCREMENT_32BIT               "XL_FR_PAYLOAD_INCREMENT_32BIT"               
+    int _XL_FR_PAYLOAD_INCREMENT_NONE                "XL_FR_PAYLOAD_INCREMENT_NONE"                
+
+    int _XL_FR_WAKEUP_UNDEFINED                      "XL_FR_WAKEUP_UNDEFINED"                      
+    int _XL_FR_WAKEUP_RECEIVED_HEADER                "XL_FR_WAKEUP_RECEIVED_HEADER"                
+    int _XL_FR_WAKEUP_RECEIVED_WUP                   "XL_FR_WAKEUP_RECEIVED_WUP"                   
+    int _XL_FR_WAKEUP_COLLISION_HEADER               "XL_FR_WAKEUP_COLLISION_HEADER"               
+    int _XL_FR_WAKEUP_COLLISION_WUP                  "XL_FR_WAKEUP_COLLISION_WUP"                  
+    int _XL_FR_WAKEUP_COLLISION_UNKNOWN              "XL_FR_WAKEUP_COLLISION_UNKNOWN"              
+    int _XL_FR_WAKEUP_TRANSMITTED                    "XL_FR_WAKEUP_TRANSMITTED"                    
+    int _XL_FR_WAKEUP_RESERVED                       "XL_FR_WAKEUP_RESERVED"                       
+
+    int _XL_FR_SYMBOL_MTS                            "XL_FR_SYMBOL_MTS"                            
+    int _XL_FR_SYMBOL_CAS                            "XL_FR_SYMBOL_CAS"                            
+
+    int _XL_FR_SYMBOL_STATUS_SESA                    "XL_FR_SYMBOL_STATUS_SESA"                    
+    int _XL_FR_SYMBOL_STATUS_SBSA                    "XL_FR_SYMBOL_STATUS_SBSA"                    
+    int _XL_FR_SYMBOL_STATUS_TCSA                    "XL_FR_SYMBOL_STATUS_TCSA"                    
+    int _XL_FR_SYMBOL_STATUS_SESB                    "XL_FR_SYMBOL_STATUS_SESB"                    
+    int _XL_FR_SYMBOL_STATUS_SBSB                    "XL_FR_SYMBOL_STATUS_SBSB"                    
+    int _XL_FR_SYMBOL_STATUS_TCSB                    "XL_FR_SYMBOL_STATUS_TCSB"                    
+    int _XL_FR_SYMBOL_STATUS_MTSA                    "XL_FR_SYMBOL_STATUS_MTSA"                    
+    int _XL_FR_SYMBOL_STATUS_MTSB                    "XL_FR_SYMBOL_STATUS_MTSB"                    
+
+    int _XL_FR_ERROR_POC_MODE                        "XL_FR_ERROR_POC_MODE"                        
+    int _XL_FR_ERROR_SYNC_FRAMES_BELOWMIN            "XL_FR_ERROR_SYNC_FRAMES_BELOWMIN"            
+    int _XL_FR_ERROR_SYNC_FRAMES_OVERLOAD            "XL_FR_ERROR_SYNC_FRAMES_OVERLOAD"            
+    int _XL_FR_ERROR_CLOCK_CORR_FAILURE              "XL_FR_ERROR_CLOCK_CORR_FAILURE"              
+    int _XL_FR_ERROR_NIT_FAILURE                     "XL_FR_ERROR_NIT_FAILURE"                     
+    int _XL_FR_ERROR_CC_ERROR                        "XL_FR_ERROR_CC_ERROR"                        
+
+    int _XL_FR_ERROR_POC_ACTIVE                      "XL_FR_ERROR_POC_ACTIVE"                      
+    int _XL_FR_ERROR_POC_PASSIVE                     "XL_FR_ERROR_POC_PASSIVE"                     
+    int _XL_FR_ERROR_POC_COMM_HALT                   "XL_FR_ERROR_POC_COMM_HALT"                   
+
+    int _XL_FR_ERROR_MISSING_OFFSET_CORRECTION       "XL_FR_ERROR_MISSING_OFFSET_CORRECTION"       
+    int _XL_FR_ERROR_MAX_OFFSET_CORRECTION_REACHED   "XL_FR_ERROR_MAX_OFFSET_CORRECTION_REACHED"   
+    int _XL_FR_ERROR_MISSING_RATE_CORRECTION         "XL_FR_ERROR_MISSING_RATE_CORRECTION"         
+    int _XL_FR_ERROR_MAX_RATE_CORRECTION_REACHED     "XL_FR_ERROR_MAX_RATE_CORRECTION_REACHED"     
+
+    int _XL_FR_ERROR_NIT_SENA                        "XL_FR_ERROR_NIT_SENA"                        
+    int _XL_FR_ERROR_NIT_SBNA                        "XL_FR_ERROR_NIT_SBNA"                        
+    int _XL_FR_ERROR_NIT_SENB                        "XL_FR_ERROR_NIT_SENB"                        
+    int _XL_FR_ERROR_NIT_SBNB                        "XL_FR_ERROR_NIT_SBNB"                        
+
+    int _XL_FR_ERROR_CC_PERR                         "XL_FR_ERROR_CC_PERR"                         
+    int _XL_FR_ERROR_CC_IIBA                         "XL_FR_ERROR_CC_IIBA"                         
+    int _XL_FR_ERROR_CC_IOBA                         "XL_FR_ERROR_CC_IOBA"                         
+    int _XL_FR_ERROR_CC_MHF                          "XL_FR_ERROR_CC_MHF"                          
+    int _XL_FR_ERROR_CC_EDA                          "XL_FR_ERROR_CC_EDA"                          
+    int _XL_FR_ERROR_CC_LTVA                         "XL_FR_ERROR_CC_LTVA"                         
+    int _XL_FR_ERROR_CC_TABA                         "XL_FR_ERROR_CC_TABA"                         
+    int _XL_FR_ERROR_CC_EDB                          "XL_FR_ERROR_CC_EDB"                          
+    int _XL_FR_ERROR_CC_LTVB                         "XL_FR_ERROR_CC_LTVB"                         
+    int _XL_FR_ERROR_CC_TABB                         "XL_FR_ERROR_CC_TABB"                         
+
+    int _XL_FR_STATUS_DEFAULT_CONFIG                 "XL_FR_STATUS_DEFAULT_CONFIG"                 
+    int _XL_FR_STATUS_READY                          "XL_FR_STATUS_READY"                          
+    int _XL_FR_STATUS_NORMAL_ACTIVE                  "XL_FR_STATUS_NORMAL_ACTIVE"                  
+    int _XL_FR_STATUS_NORMAL_PASSIVE                 "XL_FR_STATUS_NORMAL_PASSIVE"                 
+    int _XL_FR_STATUS_HALT                           "XL_FR_STATUS_HALT"                           
+    int _XL_FR_STATUS_MONITOR_MODE                   "XL_FR_STATUS_MONITOR_MODE"                   
+    int _XL_FR_STATUS_CONFIG                         "XL_FR_STATUS_CONFIG"                         
+    int _XL_FR_STATUS_WAKEUP_STANDBY                 "XL_FR_STATUS_WAKEUP_STANDBY"                 
+    int _XL_FR_STATUS_WAKEUP_LISTEN                  "XL_FR_STATUS_WAKEUP_LISTEN"                  
+    int _XL_FR_STATUS_WAKEUP_SEND                    "XL_FR_STATUS_WAKEUP_SEND"                    
+    int _XL_FR_STATUS_WAKEUP_DETECT                  "XL_FR_STATUS_WAKEUP_DETECT"                  
+    int _XL_FR_STATUS_STARTUP_PREPARE                "XL_FR_STATUS_STARTUP_PREPARE"                
+    int _XL_FR_STATUS_COLDSTART_LISTEN               "XL_FR_STATUS_COLDSTART_LISTEN"               
+    int _XL_FR_STATUS_COLDSTART_COLLISION_RESOLUTION "XL_FR_STATUS_COLDSTART_COLLISION_RESOLUTION" 
+    int _XL_FR_STATUS_COLDSTART_CONSISTENCY_CHECK    "XL_FR_STATUS_COLDSTART_CONSISTENCY_CHECK"    
+    int _XL_FR_STATUS_COLDSTART_GAP                  "XL_FR_STATUS_COLDSTART_GAP"                  
+    int _XL_FR_STATUS_COLDSTART_JOIN                 "XL_FR_STATUS_COLDSTART_JOIN"                 
+    int _XL_FR_STATUS_INTEGRATION_COLDSTART_CHECK    "XL_FR_STATUS_INTEGRATION_COLDSTART_CHECK"    
+    int _XL_FR_STATUS_INTEGRATION_LISTEN             "XL_FR_STATUS_INTEGRATION_LISTEN"             
+    int _XL_FR_STATUS_INTEGRATION_CONSISTENCY_CHECK  "XL_FR_STATUS_INTEGRATION_CONSISTENCY_CHECK"  
+    int _XL_FR_STATUS_INITIALIZE_SCHEDULE            "XL_FR_STATUS_INITIALIZE_SCHEDULE"            
+    int _XL_FR_STATUS_ABORT_STARTUP                  "XL_FR_STATUS_ABORT_STARTUP"                  
+    int _XL_FR_STATUS_STARTUP_SUCCESS                "XL_FR_STATUS_STARTUP_SUCCESS"                
+
+    int _XL_NOTIFY_REASON_CHANNEL_ACTIVATION         "XL_NOTIFY_REASON_CHANNEL_ACTIVATION"         
+    int _XL_NOTIFY_REASON_CHANNEL_DEACTIVATION       "XL_NOTIFY_REASON_CHANNEL_DEACTIVATION"       
+    int _XL_NOTIFY_REASON_PORT_CLOSED                "XL_NOTIFY_REASON_PORT_CLOSED"   
+
+    int _XL_FR_TRANSCEIVER_MODE_SLEEP                "XL_FR_TRANSCEIVER_MODE_SLEEP"
+    int _XL_FR_TRANSCEIVER_MODE_NORMAL               "XL_FR_TRANSCEIVER_MODE_NORMAL"
+    int _XL_FR_TRANSCEIVER_MODE_RECEIVE_ONLY         "XL_FR_TRANSCEIVER_MODE_RECEIVE_ONLY"
+    int _XL_FR_TRANSCEIVER_MODE_STANDBY              "XL_FR_TRANSCEIVER_MODE_STANDBY"
 
     XLstatus xlOpenDriver()
     XLstatus xlCloseDriver()
@@ -273,7 +436,26 @@ cdef extern from "vxlapi.h":
     XLstatus xlCanFdSetConfiguration(XLportHandle portHandle, XLaccess accessMask, XLcanFdConf* pCanFdConf)
     XLstatus xlCanTransmitEx(XLportHandle portHandle, XLaccess accessMask, unsigned int msgCnt, unsigned int* pMsgCntSent, XLcanTxEvent* pXlCanTxEvt)
 
-cpdef enum e_XLevent_type:
+
+
+
+    XLstatus xlFrSetConfiguration(XLportHandle portHandle, XLaccess accessMask, XLfrClusterConfig *pxlClusterConfig)
+    XLstatus xlFrGetChannelConfiguration(XLportHandle portHandle, XLaccess accessMask, XLfrChannelConfig* pxlFrChannelConfig)
+    XLstatus xlFrSetMode(XLportHandle portHandle, XLaccess accessMask, XLfrMode *frMode)
+    XLstatus xlFrInitStartupAndSync(XLportHandle portHandle, XLaccess accessMask, XLfrEvent *pEventBuffer)
+    XLstatus xlFrSetupSymbolWindow(XLportHandle portHandle, XLaccess accessMask, unsigned int frChannel, unsigned int symbolWindowMask)
+    XLstatus xlFrActivateSpy(XLportHandle portHandle, XLaccess accessMask, unsigned int mode)
+    XLstatus xlSetTimerBaseNotify(XLportHandle portHandle, XLhandle *pHandle)
+    XLstatus xlFrReceive(XLportHandle portHandle, XLfrEvent *pEventBuffer)
+    XLstatus xlFrTransmit(XLportHandle portHandle, XLaccess accessMask, XLfrEvent *pEventBuffer)
+    XLstatus xlFrSetTransceiverMode(XLportHandle portHandle, XLaccess accessMask, unsigned int frChannel, unsigned int mode)
+    XLstatus xlFrSendSymbolWindow(XLportHandle portHandle, XLaccess accessMask, unsigned int symbolWindow)
+    XLstatus xlFrSetAcceptanceFilter(XLportHandle portHandle, XLaccess accessMask, XLfrAcceptanceFilter *pAcceptanceFilter)
+
+
+
+
+cdef enum e_XLevent_type:
     XL_NO_COMMAND               =  0
     XL_RECEIVE_MSG              =  1
     XL_CHIP_STATE               =  4
@@ -292,19 +474,19 @@ cpdef enum e_XLevent_type:
     XL_RECEIVE_DAIO_DATA        = 32
     XL_RECEIVE_DAIO_PIGGY       = 34
 
-cpdef OpenDriver():
+def OpenDriver():
     return xlOpenDriver()
 
-cpdef CloseDriver():
+def CloseDriver():
     return xlCloseDriver()
 
-cpdef GetChannelMask(int hwType, int hwIndex, int hwChannel):
+def GetChannelMask(int hwType, int hwIndex, int hwChannel):
     return xlGetChannelMask(hwType, hwIndex, hwChannel)
 
-cpdef GetChannelIndex(int hwType, int hwIndex, int hwChannel):
+def GetChannelIndex(int hwType, int hwIndex, int hwChannel):
     return xlGetChannelIndex(hwType, hwIndex, hwChannel)
 
-cpdef OpenPort(list portHandle, char* appName, XLaccess accessMask, list permissionMask, unsigned int rxQueueSize, unsigned int xlInterfaceVersion, unsigned int busType):
+def OpenPort(list portHandle, char* appName, XLaccess accessMask, list permissionMask, unsigned int rxQueueSize, unsigned int xlInterfaceVersion, unsigned int busType):
     cdef XLstatus status = XL_ERROR
     cdef XLportHandle port_handle = XL_INVALID_PORTHANDLE
     cdef XLaccess permission_mask = permissionMask[0]
@@ -315,13 +497,13 @@ cpdef OpenPort(list portHandle, char* appName, XLaccess accessMask, list permiss
     permissionMask[0] = permission_mask
     return status
 
-cpdef ClosePort(XLportHandle portHandle):
+def ClosePort(XLportHandle portHandle):
     return xlClosePort(portHandle)
 
-cpdef SetTimerRate(XLportHandle portHandle, unsigned long timerRate):
+def SetTimerRate(XLportHandle portHandle, unsigned long timerRate):
     return xlSetTimerRate(portHandle, timerRate)
 
-cpdef SetTimerRateAndChannel(XLportHandle portHandle, list ptimerChannelMask, list ptimerRate):
+def SetTimerRateAndChannel(XLportHandle portHandle, list ptimerChannelMask, list ptimerRate):
     cdef XLstatus status = XL_ERROR
     cdef XLaccess timerChannelMask = ptimerChannelMask[0]
     cdef unsigned long timerRate = ptimerRate[0]
@@ -330,10 +512,10 @@ cpdef SetTimerRateAndChannel(XLportHandle portHandle, list ptimerChannelMask, li
 
     return status
 
-cpdef CanSetChannelBitrate(XLportHandle portHandle, XLaccess accessMask, unsigned long bitrate):
+def CanSetChannelBitrate(XLportHandle portHandle, XLaccess accessMask, unsigned long bitrate):
     return xlCanSetChannelBitrate(portHandle, accessMask, bitrate)
 
-cpdef CanSetChannelParams(XLportHandle portHandle, XLaccess accessMask, dict pChipParams):
+def CanSetChannelParams(XLportHandle portHandle, XLaccess accessMask, dict pChipParams):
     cdef XLstatus status = XL_ERROR
     cdef XLchipParams chipParams = {0}
 
@@ -346,13 +528,13 @@ cpdef CanSetChannelParams(XLportHandle portHandle, XLaccess accessMask, dict pCh
     status = xlCanSetChannelParams(portHandle, accessMask, &chipParams)
     return status
 
-cpdef ActivateChannel(XLportHandle portHandle, XLaccess accessMask, unsigned int busType, unsigned int flags):
+def ActivateChannel(XLportHandle portHandle, XLaccess accessMask, unsigned int busType, unsigned int flags):
     return xlActivateChannel(portHandle, accessMask, busType, flags)
 
-cpdef DeactivateChannel(XLportHandle portHandle, XLaccess accessMask):
+def DeactivateChannel(XLportHandle portHandle, XLaccess accessMask):
     return xlDeactivateChannel(portHandle, accessMask)
 
-cpdef CanTransmit(XLportHandle portHandle, XLaccess accessMask, list messageCount, list pMessage):
+def CanTransmit(XLportHandle portHandle, XLaccess accessMask, list messageCount, list pMessage):
     cdef XLstatus status = XL_ERROR
     cdef unsigned int message_count = 0
     cdef XLevent *pxlEvent = NULL
@@ -373,13 +555,13 @@ cpdef CanTransmit(XLportHandle portHandle, XLaccess accessMask, list messageCoun
     messageCount[0] = message_count
     return status
 
-cpdef CanFlushTransmitQueue(XLportHandle portHandle, XLaccess accessMask):
+def CanFlushTransmitQueue(XLportHandle portHandle, XLaccess accessMask):
     return xlCanFlushTransmitQueue(portHandle, accessMask)
 
-cpdef CanRequestChipState(XLportHandle portHandle, XLaccess accessMask):
+def CanRequestChipState(XLportHandle portHandle, XLaccess accessMask):
     return xlCanRequestChipState(portHandle,accessMask)
 
-cpdef Receive(XLportHandle portHandle, list pEventCount, list pEventList, list pEventString):
+def Receive(XLportHandle portHandle, list pEventCount, list pEventList, list pEventString):
     cdef XLstatus status = XL_ERROR
     cdef unsigned int eventCount = 1
     cdef XLevent xlEvent
@@ -417,78 +599,78 @@ cpdef Receive(XLportHandle portHandle, list pEventCount, list pEventList, list p
     pEventList[0] = retEvent
     return status
 
-cpdef FlushReceiveQueue(XLportHandle portHandle):
+def FlushReceiveQueue(XLportHandle portHandle):
     return xlFlushReceiveQueue(portHandle)
 
-cpdef GetReceiveQueueLevel(XLportHandle portHandle, list plevel):
+def GetReceiveQueueLevel(XLportHandle portHandle, list plevel):
     cdef XLstatus status
     cdef int level = plevel[0]
     status = xlGetReceiveQueueLevel(portHandle, &level)
     plevel[0] = level
     return status
 
-cpdef SetNotification(XLportHandle portHandle, list pXlHandle, int queueLevel):
-    cpdef XLstatus status = XL_ERROR
-    cpdef XLhandle xlHandle = NULL
+def SetNotification(XLportHandle portHandle, list pXlHandle, int queueLevel):
+    cdef XLstatus status = XL_ERROR
+    cdef XLhandle xlHandle = NULL
     status = xlSetNotification(portHandle, &xlHandle, queueLevel)
     pXlHandle[0] = <size_t>xlHandle
     return status
 
-cpdef ResetClock(XLportHandle portHandle):
+def ResetClock(XLportHandle portHandle):
     return xlResetClock(portHandle)
 
-cpdef CanSetChannelMode(XLportHandle portHandle, XLaccess accessMask, int tx, int txrq):
+def CanSetChannelMode(XLportHandle portHandle, XLaccess accessMask, int tx, int txrq):
     return xlCanSetChannelMode(portHandle, accessMask, tx, txrq)
 
-cpdef CanSetChannelOutput(XLportHandle portHandle, XLaccess accessMask, unsigned char mode):
+def CanSetChannelOutput(XLportHandle portHandle, XLaccess accessMask, unsigned char mode):
     return xlCanSetChannelOutput(portHandle, accessMask, mode)
 
-cpdef CanSetReceiveMode(XLportHandle portHandle, unsigned char ErrorFrame, unsigned char ChipState):
+def CanSetReceiveMode(XLportHandle portHandle, unsigned char ErrorFrame, unsigned char ChipState):
     return xlCanSetReceiveMode(portHandle, ErrorFrame, ChipState)
 
-cpdef CanSetChannelParamsC200(XLportHandle portHandle, XLaccess accessMask, unsigned char btr0, unsigned char btr1):
+def CanSetChannelParamsC200(XLportHandle portHandle, XLaccess accessMask, unsigned char btr0, unsigned char btr1):
     return xlCanSetChannelParamsC200(portHandle, accessMask, btr0, btr1)
 
-cpdef CanSetChannelTransceiver(XLportHandle portHandle, XLaccess accessMask, int type, int lineMode, int resNet):
+def CanSetChannelTransceiver(XLportHandle portHandle, XLaccess accessMask, int type, int lineMode, int resNet):
     return xlCanSetChannelTransceiver(portHandle, accessMask, type, lineMode, resNet)
 
-cpdef CanSetChannelAcceptance(XLportHandle portHandle, XLaccess accessMask, unsigned long code, unsigned long mask, unsigned int idRange):
+def CanSetChannelAcceptance(XLportHandle portHandle, XLaccess accessMask, unsigned long code, unsigned long mask, unsigned int idRange):
     return xlCanSetChannelAcceptance(portHandle, accessMask, code, mask, idRange)
 
-cpdef CanAddAcceptanceRange(XLportHandle portHandle, XLaccess accessMask, unsigned long first_id, unsigned long last_id):
+def CanAddAcceptanceRange(XLportHandle portHandle, XLaccess accessMask, unsigned long first_id, unsigned long last_id):
     return xlCanAddAcceptanceRange(portHandle, accessMask, first_id, last_id)
 
-cpdef CanRemoveAcceptanceRange(XLportHandle portHandle, XLaccess accessMask, unsigned long first_id, unsigned long last_id):
+def CanRemoveAcceptanceRange(XLportHandle portHandle, XLaccess accessMask, unsigned long first_id, unsigned long last_id):
     return xlCanRemoveAcceptanceRange(portHandle, accessMask, first_id, last_id)
 
-cpdef CanResetAcceptance(XLportHandle portHandle, XLaccess accessMask, unsigned int idRange):
+def CanResetAcceptance(XLportHandle portHandle, XLaccess accessMask, unsigned int idRange):
     return xlCanResetAcceptance(portHandle, accessMask, idRange)
 
-cpdef SetGlobalTimeSync(unsigned long newValue, list pPreviousValue):
+def SetGlobalTimeSync(unsigned long newValue, list pPreviousValue):
     cdef XLstatus status = XL_ERROR
     cdef unsigned long previousValue = XL_SET_TIMESYNC_NO_CHANGE
     status = xlSetGlobalTimeSync(newValue, &previousValue)
     pPreviousValue[0] = previousValue
     return status
 
-cpdef GetSyncTime(XLportHandle portHandle, list pTime):
+def GetSyncTime(XLportHandle portHandle, list pTime):
     cdef XLstatus = XL_ERROR
     cdef XLuint64 time = 0
     status = xlGetSyncTime(portHandle, &time)
     pTime[0] = time
     return status
 
-cpdef GetChannelTime(XLportHandle portHandle, XLaccess accessMask, list pChannelTime):
-    cpdef XLstatus status = XL_ERROR
-    cpdef XLuint64 channelTime
+def GetChannelTime(XLportHandle portHandle, XLaccess accessMask, list pChannelTime):
+    cdef XLstatus status = XL_ERROR
+    cdef XLuint64 channelTime
     status = xlGetChannelTime(portHandle, accessMask, &channelTime)
     pChannelTime[0] = channelTime
     return status
 
-cpdef GenerateSyncPulse(XLportHandle portHandle, XLaccess accessMask):
+def GenerateSyncPulse(XLportHandle portHandle, XLaccess accessMask):
     return xlGenerateSyncPulse(portHandle, accessMask)
 
-#cpdef GetEventString(dict pXLevent):
+#def GetEventString(dict pXLevent):
     #cdef XLevent xlEvent
     #memset(&xlEvent, 0, sizeof(xlEvent))
 
@@ -505,7 +687,7 @@ cpdef GenerateSyncPulse(XLportHandle portHandle, XLaccess accessMask):
     #     xlEvent.tagData.msg.data[i] = pXLevent["tagData"]["msg"]["data"][i]
     #return xlGetEventString(&xlEvent)
 
-cpdef GetErrorString(XLstatus err):
+def GetErrorString(XLstatus err):
     return xlGetErrorString(err)
 
 def GetApplConfig(char *appName, unsigned int appChannel, list pHwType, list pHwIndex, list pHwChannel, unsigned int busType):
@@ -581,7 +763,7 @@ def GetDriverConfig(dict pDriverConfig):
                 can["tseg2"]      = driverConfig.channel[i].busParams.data.can.tseg2
                 can["sam"]        = driverConfig.channel[i].busParams.data.can.sam
                 can["outputMode"] = driverConfig.channel[i].busParams.data.can.outputMode
-                can["reserved[7]"]= bytearray([driverConfig.channel[i].busParams.data.can.reserved[j] for j in range(7)])
+                can["reserved1[7]"]= bytearray([driverConfig.channel[i].busParams.data.can.reserved1[j] for j in range(7)])
                 can["canOpMode"]  = driverConfig.channel[i].busParams.data.can.canOpMode
                 data["can"] = can
         elif busParams["busType"] == XL_BUS_TYPE_LIN:
@@ -733,7 +915,7 @@ def GetRemoteDriverConfig(dict pDriverConfig):
                 can["tseg2"]      = driverConfig.channel[i].busParams.data.can.tseg2
                 can["sam"]        = driverConfig.channel[i].busParams.data.can.sam
                 can["outputMode"] = driverConfig.channel[i].busParams.data.can.outputMode
-                can["reserved[7]"]= bytearray([driverConfig.channel[i].busParams.data.can.reserved[j] for j in range(7)])
+                can["reserved1[7]"]= bytearray([driverConfig.channel[i].busParams.data.can.reserved1[j] for j in range(7)])
                 can["canOpMode"]  = driverConfig.channel[i].busParams.data.can.canOpMode
                 data["can"] = can
         elif busParams["busType"] == XL_BUS_TYPE_LIN:
@@ -870,7 +1052,7 @@ def GetKeymanInfo(unsigned int boxIndex, list pBoxMask, list pBoxSerial, list pL
                 pLicInfo.append(licInfo[i])
         return status
 
-cpdef CanFdSetConfiguration(XLportHandle portHandle, XLaccess accessMask, list pCanFdConf):
+def CanFdSetConfiguration(XLportHandle portHandle, XLaccess accessMask, list pCanFdConf):
     cdef XLstatus status = XL_ERROR
     cdef XLcanFdConf canFdConf
     memset(&canFdConf, 0, sizeof(canFdConf))
@@ -881,7 +1063,7 @@ cpdef CanFdSetConfiguration(XLportHandle portHandle, XLaccess accessMask, list p
 
     return status
 
-cpdef CanTransmitEx(XLportHandle portHandle, XLaccess accessMask, unsigned char channelIndex, unsigned int msgCnt, list pMsgCntSent, list pXlCanTxEvt):
+def CanTransmitEx(XLportHandle portHandle, XLaccess accessMask, unsigned char channelIndex, unsigned int msgCnt, list pMsgCntSent, list pXlCanTxEvt):
     cdef XLstatus status = XL_ERROR
     cdef unsigned int message_count = 0
     cdef unsigned int msgCntSent = 0
@@ -911,6 +1093,170 @@ cpdef CanTransmitEx(XLportHandle portHandle, XLaccess accessMask, unsigned char 
     pMsgCntSent[0] = msgCntSent
     return status
 
+def FrSetConfiguration(XLportHandle portHandle, XLaccess accessMask, dict pxlClusterConfig):
+    cdef XLstatus status = XL_ERROR
+    cdef XLfrClusterConfig clusterConfig
+    memset(&clusterConfig, 0, sizeof(clusterConfig))
+    clusterConfig.busGuardianEnable                 = pxlClusterConfig["busGuardianEnable"]                 
+    clusterConfig.baudrate                          = pxlClusterConfig["baudrate"]                          
+    clusterConfig.busGuardianTick                   = pxlClusterConfig["busGuardianTick"]                   
+    clusterConfig.externalClockCorrectionMode       = pxlClusterConfig["externalClockCorrectionMode"]       
+    clusterConfig.gColdStartAttempts                = pxlClusterConfig["gColdStartAttempts"]                
+    clusterConfig.gListenNoise                      = pxlClusterConfig["gListenNoise"]                      
+    clusterConfig.gMacroPerCycle                    = pxlClusterConfig["gMacroPerCycle"]                    
+    clusterConfig.gMaxWithoutClockCorrectionFatal   = pxlClusterConfig["gMaxWithoutClockCorrectionFatal"]   
+    clusterConfig.gMaxWithoutClockCorrectionPassive = pxlClusterConfig["gMaxWithoutClockCorrectionPassive"] 
+    clusterConfig.gNetworkManagementVectorLength    = pxlClusterConfig["gNetworkManagementVectorLength"]    
+    clusterConfig.gNumberOfMinislots                = pxlClusterConfig["gNumberOfMinislots"]                
+    clusterConfig.gNumberOfStaticSlots              = pxlClusterConfig["gNumberOfStaticSlots"]              
+    clusterConfig.gOffsetCorrectionStart            = pxlClusterConfig["gOffsetCorrectionStart"]            
+    clusterConfig.gPayloadLengthStatic              = pxlClusterConfig["gPayloadLengthStatic"]              
+    clusterConfig.gSyncNodeMax                      = pxlClusterConfig["gSyncNodeMax"]                      
+    clusterConfig.gdActionPointOffset               = pxlClusterConfig["gdActionPointOffset"]               
+    clusterConfig.gdDynamicSlotIdlePhase            = pxlClusterConfig["gdDynamicSlotIdlePhase"]            
+    clusterConfig.gdMacrotick                       = pxlClusterConfig["gdMacrotick"]                       
+    clusterConfig.gdMinislot                        = pxlClusterConfig["gdMinislot"]                        
+    clusterConfig.gdMiniSlotActionPointOffset       = pxlClusterConfig["gdMiniSlotActionPointOffset"]       
+    clusterConfig.gdNIT                             = pxlClusterConfig["gdNIT"]                             
+    clusterConfig.gdStaticSlot                      = pxlClusterConfig["gdStaticSlot"]                      
+    clusterConfig.gdSymbolWindow                    = pxlClusterConfig["gdSymbolWindow"]                    
+    clusterConfig.gdTSSTransmitter                  = pxlClusterConfig["gdTSSTransmitter"]                  
+    clusterConfig.gdWakeupSymbolRxIdle              = pxlClusterConfig["gdWakeupSymbolRxIdle"]              
+    clusterConfig.gdWakeupSymbolRxLow               = pxlClusterConfig["gdWakeupSymbolRxLow"]               
+    clusterConfig.gdWakeupSymbolRxWindow            = pxlClusterConfig["gdWakeupSymbolRxWindow"]            
+    clusterConfig.gdWakeupSymbolTxIdle              = pxlClusterConfig["gdWakeupSymbolTxIdle"]              
+    clusterConfig.gdWakeupSymbolTxLow               = pxlClusterConfig["gdWakeupSymbolTxLow"]               
+    clusterConfig.pAllowHaltDueToClock              = pxlClusterConfig["pAllowHaltDueToClock"]              
+    clusterConfig.pAllowPassiveToActive             = pxlClusterConfig["pAllowPassiveToActive"]             
+    clusterConfig.pChannels                         = pxlClusterConfig["pChannels"]                         
+    clusterConfig.pClusterDriftDamping              = pxlClusterConfig["pClusterDriftDamping"]              
+    clusterConfig.pDecodingCorrection               = pxlClusterConfig["pDecodingCorrection"]               
+    clusterConfig.pDelayCompensationA               = pxlClusterConfig["pDelayCompensationA"]               
+    clusterConfig.pDelayCompensationB               = pxlClusterConfig["pDelayCompensationB"]               
+    clusterConfig.pExternOffsetCorrection           = pxlClusterConfig["pExternOffsetCorrection"]           
+    clusterConfig.pExternRateCorrection             = pxlClusterConfig["pExternRateCorrection"]             
+    clusterConfig.pKeySlotUsedForStartup            = pxlClusterConfig["pKeySlotUsedForStartup"]            
+    clusterConfig.pKeySlotUsedForSync               = pxlClusterConfig["pKeySlotUsedForSync"]               
+    clusterConfig.pLatestTx                         = pxlClusterConfig["pLatestTx"]                         
+    clusterConfig.pMacroInitialOffsetA              = pxlClusterConfig["pMacroInitialOffsetA"]              
+    clusterConfig.pMacroInitialOffsetB              = pxlClusterConfig["pMacroInitialOffsetB"]              
+    clusterConfig.pMaxPayloadLengthDynamic          = pxlClusterConfig["pMaxPayloadLengthDynamic"]          
+    clusterConfig.pMicroInitialOffsetA              = pxlClusterConfig["pMicroInitialOffsetA"]              
+    clusterConfig.pMicroInitialOffsetB              = pxlClusterConfig["pMicroInitialOffsetB"]              
+    clusterConfig.pMicroPerCycle                    = pxlClusterConfig["pMicroPerCycle"]                    
+    clusterConfig.pMicroPerMacroNom                 = pxlClusterConfig["pMicroPerMacroNom"]                 
+    clusterConfig.pOffsetCorrectionOut              = pxlClusterConfig["pOffsetCorrectionOut"]              
+    clusterConfig.pRateCorrectionOut                = pxlClusterConfig["pRateCorrectionOut"]                
+    clusterConfig.pSamplesPerMicrotick              = pxlClusterConfig["pSamplesPerMicrotick"]              
+    clusterConfig.pSingleSlotEnabled                = pxlClusterConfig["pSingleSlotEnabled"]                
+    clusterConfig.pWakeupChannel                    = pxlClusterConfig["pWakeupChannel"]                    
+    clusterConfig.pWakeupPattern                    = pxlClusterConfig["pWakeupPattern"]                    
+    clusterConfig.pdAcceptedStartupRange            = pxlClusterConfig["pdAcceptedStartupRange"]            
+    clusterConfig.pdListenTimeout                   = pxlClusterConfig["pdListenTimeout"]                   
+    clusterConfig.pdMaxDrift                        = pxlClusterConfig["pdMaxDrift"]                        
+    clusterConfig.pdMicrotick                       = pxlClusterConfig["pdMicrotick"]                       
+    clusterConfig.gdCASRxLowMax                     = pxlClusterConfig["gdCASRxLowMax"]                     
+    clusterConfig.gChannels                         = pxlClusterConfig["gChannels"]                         
+    clusterConfig.vExternOffsetControl              = pxlClusterConfig["vExternOffsetControl"]              
+    clusterConfig.vExternRateControl                = pxlClusterConfig["vExternRateControl"]                
+    clusterConfig.pChannelsMTS                      = pxlClusterConfig["pChannelsMTS"]                      
+    status = xlFrSetConfiguration(portHandle, accessMask, &clusterConfig)
+    pxlClusterConfig = clusterConfig
+    return status
+
+def FrGetChannelConfiguration(XLportHandle portHandle, XLaccess accessMask, dict pxlFrChannelConfig):
+    cdef XLstatus status = XL_ERROR
+    cdef XLfrChannelConfig channelConfig
+    status = xlFrGetChannelConfiguration(portHandle, accessMask, &channelConfig)
+    pxlFrChannelConfig = channelConfig
+    return status
+
+def FrSetMode(XLportHandle portHandle, XLaccess accessMask, dict frMode):
+    cdef XLstatus status = XL_ERROR
+    cdef XLfrMode mode
+    memset(&mode, 0, sizeof(mode))
+    mode.frMode                 = frMode['frMode']
+    mode.frStartupAttributes    = frMode['frStartupAttributes']
+    status = xlFrSetMode(portHandle, accessMask, &mode)
+    frMode = mode
+    return status
+
+cdef GetEventBufferFromDict(XLfrEvent *pEventBuffer, dict dictEventBuffer):
+    pEventBuffer.tag                               = dictEventBuffer['tag']
+    pEventBuffer.flagsChip                         = dictEventBuffer['flagsChip']
+    pEventBuffer.size                              = dictEventBuffer['size']
+    pEventBuffer.userHandle                        = dictEventBuffer['userHandle']
+    pEventBuffer.tagData.frTxFrame.flags           = dictEventBuffer['tagData']['frTxFrame']['flags']
+    pEventBuffer.tagData.frTxFrame.offset          = dictEventBuffer['tagData']['frTxFrame']['offset']
+    pEventBuffer.tagData.frTxFrame.repetition      = dictEventBuffer['tagData']['frTxFrame']['repetition']
+    pEventBuffer.tagData.frTxFrame.payloadLength   = dictEventBuffer['tagData']['frTxFrame']['payloadLength']
+    pEventBuffer.tagData.frTxFrame.slotID          = dictEventBuffer['tagData']['frTxFrame']['slotID']
+    pEventBuffer.tagData.frTxFrame.txMode          = dictEventBuffer['tagData']['frTxFrame']['txMode']
+    pEventBuffer.tagData.frTxFrame.incrementOffset = dictEventBuffer['tagData']['frTxFrame']['incrementOffset']
+    pEventBuffer.tagData.frTxFrame.incrementSize   = dictEventBuffer['tagData']['frTxFrame']['incrementSize']
+    for i in range(pEventBuffer.tagData.frTxFrame.payloadLength):
+        pEventBuffer.tagData.frTxFrame.data[i] = int(dictEventBuffer['tagData']['frTxFrame']['data'][2*i:2*(i+1)])
+
+
+def FrInitStartupAndSync(XLportHandle portHandle, XLaccess accessMask, dict pEventBuffer):
+    cdef XLstatus status = XL_ERROR
+    cdef XLfrEvent eventBuffer
+    memset(&eventBuffer, 0, sizeof(eventBuffer))
+    GetEventBufferFromDict(&eventBuffer, pEventBuffer)
+    status = xlFrInitStartupAndSync(portHandle, accessMask, &eventBuffer)
+    pEventBuffer = eventBuffer
+    return status
+
+def FrSetupSymbolWindow(XLportHandle portHandle, XLaccess accessMask, unsigned int frChannel, unsigned int symbolWindowMask):
+    return xlFrSetupSymbolWindow(portHandle, accessMask, frChannel, symbolWindowMask)
+
+def FrActivateSpy(XLportHandle portHandle, XLaccess accessMask, unsigned int mode):
+    return xlFrActivateSpy(portHandle, accessMask, mode)
+
+#def SetTimerBaseNotify(XLportHandle portHandle, list pHandle):
+#    cdef XLstatus status = XL_ERROR
+#    cdef XLhandle handle = NULL
+#    memset(&handle, 0, sizeof(handle))
+#    status = xlSetTimerBaseNotify(portHandle, &handle)
+#    pHandle[0] = <size_t>handle
+#    return status
+
+def FrReceive(XLportHandle portHandle, dict pEventBuffer):
+    cdef XLstatus status = XL_ERROR
+    cdef XLfrEvent eventBuffer
+    memset(&eventBuffer, 0, sizeof(eventBuffer))
+    status = xlFrReceive(portHandle, &eventBuffer)
+    pEventBuffer = eventBuffer
+    return status
+
+def FrTransmit(XLportHandle portHandle, XLaccess accessMask, dict pEventBuffer):
+    cdef XLstatus status = XL_ERROR
+    cdef XLfrEvent eventBuffer
+    memset(&eventBuffer, 0, sizeof(eventBuffer))
+    GetEventBufferFromDict(&eventBuffer, pEventBuffer)
+    print(eventBuffer.tagData.frTxFrame.data)
+    status = xlFrTransmit(portHandle, accessMask, &eventBuffer)
+    pEventBuffer = eventBuffer
+    return status
+
+def FrSetTransceiverMode(XLportHandle portHandle, XLaccess accessMask, unsigned int frChannel, unsigned int mode):
+    return xlFrSetTransceiverMode(portHandle, accessMask, frChannel, mode)
+
+def FrSendSymbolWindow(XLportHandle portHandle, XLaccess accessMask, unsigned int symbolWindow):
+    return xlFrSendSymbolWindow(portHandle, accessMask, symbolWindow)
+
+def FrSetAcceptanceFilter(XLportHandle portHandle, XLaccess accessMask, dict pAcceptanceFilter):
+    cdef XLstatus status = XL_ERROR
+    cdef XLfrAcceptanceFilter acceptanceFilter
+    memset(&acceptanceFilter, 0, sizeof(acceptanceFilter))
+    acceptanceFilter.filterStatus       = pAcceptanceFilter['filterStatus']
+    acceptanceFilter.filterTypeMask     = pAcceptanceFilter['filterTypeMask']
+    acceptanceFilter.filterFirstSlot    = pAcceptanceFilter['filterFirstSlot']
+    acceptanceFilter.filterLastSlot     = pAcceptanceFilter['filterLastSlot']
+    acceptanceFilter.filterChannelMask  = pAcceptanceFilter['filterChannelMask']
+    status = xlFrSetAcceptanceFilter(portHandle, accessMask, &acceptanceFilter)
+    pAcceptanceFilter = acceptanceFilter
+    return status
 
 # HwType
 XL_HWTYPE_NONE                   = _XL_HWTYPE_NONE
@@ -1082,17 +1428,11 @@ XL_ERR_EDL_RTR                   = _XL_ERR_EDL_RTR
 XL_ERR_EDL_NOT_SET               = _XL_ERR_EDL_NOT_SET
 XL_ERR_UNKNOWN_FLAG              = _XL_ERR_UNKNOWN_FLAG
 XL_ERR_ETH_PHY_ACTIVATION_FAILED = _XL_ERR_ETH_PHY_ACTIVATION_FAILED
-XL_ERR_ETH_MAC_RESET_FAILED      = _XL_ERR_ETH_MAC_RESET_FAILED
-XL_ERR_ETH_MAC_NOT_READY         = _XL_ERR_ETH_MAC_NOT_READY
 XL_ERR_ETH_PHY_CONFIG_ABORTED    = _XL_ERR_ETH_PHY_CONFIG_ABORTED
 XL_ERR_ETH_RESET_FAILED          = _XL_ERR_ETH_RESET_FAILED
 XL_ERR_ETH_SET_CONFIG_DELAYED    = _XL_ERR_ETH_SET_CONFIG_DELAYED
 XL_ERR_ETH_UNSUPPORTED_FEATURE   = _XL_ERR_ETH_UNSUPPORTED_FEATURE
 XL_ERR_ETH_MAC_ACTIVATION_FAILED = _XL_ERR_ETH_MAC_ACTIVATION_FAILED
-XL_ERR_ETH_FILTER_INVALID        = _XL_ERR_ETH_FILTER_INVALID
-XL_ERR_ETH_FILTER_UNAVAILABLE    = _XL_ERR_ETH_FILTER_UNAVAILABLE
-XL_ERR_ETH_FILTER_NO_INIT_ACCESS = _XL_ERR_ETH_FILTER_NO_INIT_ACCESS
-XL_ERR_ETH_FILTER_TOO_COMPLEX    = _XL_ERR_ETH_FILTER_TOO_COMPLEX
 
 XL_ACTIVATE_NONE        = _XL_ACTIVATE_NONE
 XL_ACTIVATE_RESET_CLOCK = _XL_ACTIVATE_RESET_CLOCK
@@ -1122,3 +1462,171 @@ XL_CAN_TXMSG_FLAG_HIGHPRIO  = _XL_CAN_TXMSG_FLAG_HIGHPRIO
 XL_CAN_TXMSG_FLAG_WAKEUP    = _XL_CAN_TXMSG_FLAG_WAKEUP
 
 XL_CAN_EV_TAG_TX_MSG = _XL_CAN_EV_TAG_TX_MSG
+
+XL_FR_MODE_NORMAL                           = _XL_FR_MODE_NORMAL
+XL_FR_MODE_COLD_NORMAL                      = _XL_FR_MODE_COLD_NORMAL # only paid version
+
+XL_FR_MODE_NONE                             = _XL_FR_MODE_NONE
+XL_FR_MODE_WAKEUP                           = _XL_FR_MODE_WAKEUP
+XL_FR_MODE_COLDSTART_LEADING                = _XL_FR_MODE_COLDSTART_LEADING
+XL_FR_MODE_COLDSTART_FOLLOWING              = _XL_FR_MODE_COLDSTART_FOLLOWING
+XL_FR_MODE_WAKEUP_AND_COLDSTART_LEADING     = _XL_FR_MODE_WAKEUP_AND_COLDSTART_LEADING
+XL_FR_MODE_WAKEUP_AND_COLDSTART_FOLLOWING   = _XL_FR_MODE_WAKEUP_AND_COLDSTART_FOLLOWING
+
+XL_FR_CHANNEL_CFG_STATUS_INIT_APP_PRESENT   = _XL_FR_CHANNEL_CFG_STATUS_INIT_APP_PRESENT
+XL_FR_CHANNEL_CFG_STATUS_CHANNEL_ACTIVATED  = _XL_FR_CHANNEL_CFG_STATUS_CHANNEL_ACTIVATED
+XL_FR_CHANNEL_CFG_STATUS_VALID_CFG_MODE     = _XL_FR_CHANNEL_CFG_STATUS_VALID_CFG_MODE
+
+XL_FR_CHANNEL_CFG_MODE_SYNCHRONOUS          = _XL_FR_CHANNEL_CFG_MODE_SYNCHRONOUS
+XL_FR_CHANNEL_CFG_MODE_COMBINED             = _XL_FR_CHANNEL_CFG_MODE_COMBINED
+XL_FR_CHANNEL_CFG_MODE_ASYNCHRONOUS         = _XL_FR_CHANNEL_CFG_MODE_ASYNCHRONOUS
+
+XL_FR_FILTER_PASS                           = _XL_FR_FILTER_PASS                           
+XL_FR_FILTER_BLOCK                          = _XL_FR_FILTER_BLOCK                          
+
+XL_FR_FILTER_TYPE_DATA                      = _XL_FR_FILTER_TYPE_DATA                      
+XL_FR_FILTER_TYPE_NF                        = _XL_FR_FILTER_TYPE_NF                        
+XL_FR_FILTER_TYPE_FILLUP_NF                 = _XL_FR_FILTER_TYPE_FILLUP_NF                 
+
+XL_FR_FILTER_CHANNEL_A                      = _XL_FR_FILTER_CHANNEL_A                      
+XL_FR_FILTER_CHANNEL_B                      = _XL_FR_FILTER_CHANNEL_B                      
+
+XL_FR_START_CYCLE                           = _XL_FR_START_CYCLE                           
+XL_FR_RX_FRAME                              = _XL_FR_RX_FRAME                              
+XL_FR_TX_FRAME                              = _XL_FR_TX_FRAME                              
+#XL_FR_TXACK_FRAME                           = _XL_FR_TXACK_FRAME                           
+#XL_FR_INVALID_FRAME                         = _XL_FR_INVALID_FRAME                         
+XL_FR_WAKEUP                                = _XL_FR_WAKEUP                                
+XL_FR_SYMBOL_WINDOW                         = _XL_FR_SYMBOL_WINDOW                         
+XL_FR_ERROR                                 = _XL_FR_ERROR                                 
+XL_FR_STATUS                                = _XL_FR_STATUS                                
+XL_FR_NM_VECTOR                             = _XL_FR_NM_VECTOR                             
+XL_FR_TRANCEIVER_STATUS                     = _XL_FR_TRANCEIVER_STATUS                     
+XL_FR_SPY_FRAME                             = _XL_FR_SPY_FRAME                             
+XL_FR_SPY_SYMBOL                            = _XL_FR_SPY_SYMBOL                            
+
+XL_FR_CHANNEL_A                             = _XL_FR_CHANNEL_A                             
+XL_FR_CHANNEL_B                             = _XL_FR_CHANNEL_B                             
+XL_FR_CHANNEL_AB                            = _XL_FR_CHANNEL_AB                            
+XL_FR_SPY_CHANNEL_A                         = _XL_FR_SPY_CHANNEL_A                         
+XL_FR_SPY_CHANNEL_B                         = _XL_FR_SPY_CHANNEL_B                         
+XL_FR_CC_COLD_A                             = _XL_FR_CC_COLD_A                             
+XL_FR_CC_COLD_B                             = _XL_FR_CC_COLD_B                             
+XL_FR_QUEUE_OVERFLOW                        = _XL_FR_QUEUE_OVERFLOW                        
+
+XL_FR_FRAMEFLAG_STARTUP                     = _XL_FR_FRAMEFLAG_STARTUP                     
+XL_FR_FRAMEFLAG_SYNC                        = _XL_FR_FRAMEFLAG_SYNC                        
+XL_FR_FRAMEFLAG_NULLFRAME                   = _XL_FR_FRAMEFLAG_NULLFRAME                   
+XL_FR_FRAMEFLAG_PAYLOAD_PREAMBLE            = _XL_FR_FRAMEFLAG_PAYLOAD_PREAMBLE            
+XL_FR_FRAMEFLAG_FR_RESERVED                 = _XL_FR_FRAMEFLAG_FR_RESERVED                 
+XL_FR_FRAMEFLAG_REQ_TXACK                   = _XL_FR_FRAMEFLAG_REQ_TXACK                   
+XL_FR_FRAMEFLAG_TXACK_SS                    = _XL_FR_FRAMEFLAG_TXACK_SS                    
+XL_FR_FRAMEFLAG_RX_UNEXPECTED               = _XL_FR_FRAMEFLAG_RX_UNEXPECTED               
+XL_FR_FRAMEFLAG_NEW_DATA_TX                 = _XL_FR_FRAMEFLAG_NEW_DATA_TX                 
+XL_FR_FRAMEFLAG_DATA_UPDATE_LOST            = _XL_FR_FRAMEFLAG_DATA_UPDATE_LOST            
+XL_FR_FRAMEFLAG_SYNTAX_ERROR                = _XL_FR_FRAMEFLAG_SYNTAX_ERROR                
+XL_FR_FRAMEFLAG_CONTENT_ERROR               = _XL_FR_FRAMEFLAG_CONTENT_ERROR               
+XL_FR_FRAMEFLAG_SLOT_BOUNDARY_VIOLATION     = _XL_FR_FRAMEFLAG_SLOT_BOUNDARY_VIOLATION     
+XL_FR_FRAMEFLAG_TX_CONFLICT                 = _XL_FR_FRAMEFLAG_TX_CONFLICT                 
+XL_FR_FRAMEFLAG_EMPTY_SLOT                  = _XL_FR_FRAMEFLAG_EMPTY_SLOT                  
+XL_FR_FRAMEFLAG_FRAME_TRANSMITTED           = _XL_FR_FRAMEFLAG_FRAME_TRANSMITTED           
+
+XL_FR_SPY_FRAMEFLAG_FRAMING_ERROR           = _XL_FR_SPY_FRAMEFLAG_FRAMING_ERROR           
+XL_FR_SPY_FRAMEFLAG_HEADER_CRC_ERROR        = _XL_FR_SPY_FRAMEFLAG_HEADER_CRC_ERROR        
+XL_FR_SPY_FRAMEFLAG_FRAME_CRC_ERROR         = _XL_FR_SPY_FRAMEFLAG_FRAME_CRC_ERROR         
+XL_FR_SPY_FRAMEFLAG_BUS_ERROR               = _XL_FR_SPY_FRAMEFLAG_BUS_ERROR               
+
+XL_FR_TX_MODE_CYCLIC                        = _XL_FR_TX_MODE_CYCLIC                        
+XL_FR_TX_MODE_SINGLE_SHOT                   = _XL_FR_TX_MODE_SINGLE_SHOT                   
+XL_FR_TX_MODE_NONE                          = _XL_FR_TX_MODE_NONE                          
+
+XL_FR_PAYLOAD_INCREMENT_8BIT                = _XL_FR_PAYLOAD_INCREMENT_8BIT                
+XL_FR_PAYLOAD_INCREMENT_16BIT               = _XL_FR_PAYLOAD_INCREMENT_16BIT               
+XL_FR_PAYLOAD_INCREMENT_32BIT               = _XL_FR_PAYLOAD_INCREMENT_32BIT               
+XL_FR_PAYLOAD_INCREMENT_NONE                = _XL_FR_PAYLOAD_INCREMENT_NONE                
+
+XL_FR_WAKEUP_UNDEFINED                      = _XL_FR_WAKEUP_UNDEFINED                      
+XL_FR_WAKEUP_RECEIVED_HEADER                = _XL_FR_WAKEUP_RECEIVED_HEADER                
+XL_FR_WAKEUP_RECEIVED_WUP                   = _XL_FR_WAKEUP_RECEIVED_WUP                   
+XL_FR_WAKEUP_COLLISION_HEADER               = _XL_FR_WAKEUP_COLLISION_HEADER               
+XL_FR_WAKEUP_COLLISION_WUP                  = _XL_FR_WAKEUP_COLLISION_WUP                  
+XL_FR_WAKEUP_COLLISION_UNKNOWN              = _XL_FR_WAKEUP_COLLISION_UNKNOWN              
+XL_FR_WAKEUP_TRANSMITTED                    = _XL_FR_WAKEUP_TRANSMITTED                    
+XL_FR_WAKEUP_RESERVED                       = _XL_FR_WAKEUP_RESERVED                       
+
+XL_FR_SYMBOL_MTS                            = _XL_FR_SYMBOL_MTS                            
+XL_FR_SYMBOL_CAS                            = _XL_FR_SYMBOL_CAS                            
+
+XL_FR_SYMBOL_STATUS_SESA                    = _XL_FR_SYMBOL_STATUS_SESA                    
+XL_FR_SYMBOL_STATUS_SBSA                    = _XL_FR_SYMBOL_STATUS_SBSA                    
+XL_FR_SYMBOL_STATUS_TCSA                    = _XL_FR_SYMBOL_STATUS_TCSA                    
+XL_FR_SYMBOL_STATUS_SESB                    = _XL_FR_SYMBOL_STATUS_SESB                    
+XL_FR_SYMBOL_STATUS_SBSB                    = _XL_FR_SYMBOL_STATUS_SBSB                    
+XL_FR_SYMBOL_STATUS_TCSB                    = _XL_FR_SYMBOL_STATUS_TCSB                    
+XL_FR_SYMBOL_STATUS_MTSA                    = _XL_FR_SYMBOL_STATUS_MTSA                    
+XL_FR_SYMBOL_STATUS_MTSB                    = _XL_FR_SYMBOL_STATUS_MTSB                    
+
+XL_FR_ERROR_POC_MODE                        = _XL_FR_ERROR_POC_MODE                        
+XL_FR_ERROR_SYNC_FRAMES_BELOWMIN            = _XL_FR_ERROR_SYNC_FRAMES_BELOWMIN            
+XL_FR_ERROR_SYNC_FRAMES_OVERLOAD            = _XL_FR_ERROR_SYNC_FRAMES_OVERLOAD            
+XL_FR_ERROR_CLOCK_CORR_FAILURE              = _XL_FR_ERROR_CLOCK_CORR_FAILURE              
+XL_FR_ERROR_NIT_FAILURE                     = _XL_FR_ERROR_NIT_FAILURE                     
+XL_FR_ERROR_CC_ERROR                        = _XL_FR_ERROR_CC_ERROR                        
+
+XL_FR_ERROR_POC_ACTIVE                      = _XL_FR_ERROR_POC_ACTIVE                      
+XL_FR_ERROR_POC_PASSIVE                     = _XL_FR_ERROR_POC_PASSIVE                     
+XL_FR_ERROR_POC_COMM_HALT                   = _XL_FR_ERROR_POC_COMM_HALT                   
+
+XL_FR_ERROR_MISSING_OFFSET_CORRECTION       = _XL_FR_ERROR_MISSING_OFFSET_CORRECTION       
+XL_FR_ERROR_MAX_OFFSET_CORRECTION_REACHED   = _XL_FR_ERROR_MAX_OFFSET_CORRECTION_REACHED   
+XL_FR_ERROR_MISSING_RATE_CORRECTION         = _XL_FR_ERROR_MISSING_RATE_CORRECTION         
+XL_FR_ERROR_MAX_RATE_CORRECTION_REACHED     = _XL_FR_ERROR_MAX_RATE_CORRECTION_REACHED     
+
+XL_FR_ERROR_NIT_SENA                        = _XL_FR_ERROR_NIT_SENA                        
+XL_FR_ERROR_NIT_SBNA                        = _XL_FR_ERROR_NIT_SBNA                        
+XL_FR_ERROR_NIT_SENB                        = _XL_FR_ERROR_NIT_SENB                        
+XL_FR_ERROR_NIT_SBNB                        = _XL_FR_ERROR_NIT_SBNB                        
+
+XL_FR_ERROR_CC_PERR                         = _XL_FR_ERROR_CC_PERR                         
+XL_FR_ERROR_CC_IIBA                         = _XL_FR_ERROR_CC_IIBA                         
+XL_FR_ERROR_CC_IOBA                         = _XL_FR_ERROR_CC_IOBA                         
+XL_FR_ERROR_CC_MHF                          = _XL_FR_ERROR_CC_MHF                          
+XL_FR_ERROR_CC_EDA                          = _XL_FR_ERROR_CC_EDA                          
+XL_FR_ERROR_CC_LTVA                         = _XL_FR_ERROR_CC_LTVA                         
+XL_FR_ERROR_CC_TABA                         = _XL_FR_ERROR_CC_TABA                         
+XL_FR_ERROR_CC_EDB                          = _XL_FR_ERROR_CC_EDB                          
+XL_FR_ERROR_CC_LTVB                         = _XL_FR_ERROR_CC_LTVB                         
+XL_FR_ERROR_CC_TABB                         = _XL_FR_ERROR_CC_TABB                         
+
+XL_FR_STATUS_DEFAULT_CONFIG                 = _XL_FR_STATUS_DEFAULT_CONFIG                 
+XL_FR_STATUS_READY                          = _XL_FR_STATUS_READY                          
+XL_FR_STATUS_NORMAL_ACTIVE                  = _XL_FR_STATUS_NORMAL_ACTIVE                  
+XL_FR_STATUS_NORMAL_PASSIVE                 = _XL_FR_STATUS_NORMAL_PASSIVE                 
+XL_FR_STATUS_HALT                           = _XL_FR_STATUS_HALT                           
+XL_FR_STATUS_MONITOR_MODE                   = _XL_FR_STATUS_MONITOR_MODE                   
+XL_FR_STATUS_CONFIG                         = _XL_FR_STATUS_CONFIG                         
+XL_FR_STATUS_WAKEUP_STANDBY                 = _XL_FR_STATUS_WAKEUP_STANDBY                 
+XL_FR_STATUS_WAKEUP_LISTEN                  = _XL_FR_STATUS_WAKEUP_LISTEN                  
+XL_FR_STATUS_WAKEUP_SEND                    = _XL_FR_STATUS_WAKEUP_SEND                    
+XL_FR_STATUS_WAKEUP_DETECT                  = _XL_FR_STATUS_WAKEUP_DETECT                  
+XL_FR_STATUS_STARTUP_PREPARE                = _XL_FR_STATUS_STARTUP_PREPARE                
+XL_FR_STATUS_COLDSTART_LISTEN               = _XL_FR_STATUS_COLDSTART_LISTEN               
+XL_FR_STATUS_COLDSTART_COLLISION_RESOLUTION = _XL_FR_STATUS_COLDSTART_COLLISION_RESOLUTION 
+XL_FR_STATUS_COLDSTART_CONSISTENCY_CHECK    = _XL_FR_STATUS_COLDSTART_CONSISTENCY_CHECK    
+XL_FR_STATUS_COLDSTART_GAP                  = _XL_FR_STATUS_COLDSTART_GAP                  
+XL_FR_STATUS_COLDSTART_JOIN                 = _XL_FR_STATUS_COLDSTART_JOIN                 
+XL_FR_STATUS_INTEGRATION_COLDSTART_CHECK    = _XL_FR_STATUS_INTEGRATION_COLDSTART_CHECK    
+XL_FR_STATUS_INTEGRATION_LISTEN             = _XL_FR_STATUS_INTEGRATION_LISTEN             
+XL_FR_STATUS_INTEGRATION_CONSISTENCY_CHECK  = _XL_FR_STATUS_INTEGRATION_CONSISTENCY_CHECK  
+XL_FR_STATUS_INITIALIZE_SCHEDULE            = _XL_FR_STATUS_INITIALIZE_SCHEDULE            
+XL_FR_STATUS_ABORT_STARTUP                  = _XL_FR_STATUS_ABORT_STARTUP                  
+XL_FR_STATUS_STARTUP_SUCCESS                = _XL_FR_STATUS_STARTUP_SUCCESS                
+
+XL_NOTIFY_REASON_CHANNEL_ACTIVATION         = _XL_NOTIFY_REASON_CHANNEL_ACTIVATION         
+XL_NOTIFY_REASON_CHANNEL_DEACTIVATION       = _XL_NOTIFY_REASON_CHANNEL_DEACTIVATION       
+XL_NOTIFY_REASON_PORT_CLOSED                = _XL_NOTIFY_REASON_PORT_CLOSED                
+
+XL_FR_TRANSCEIVER_MODE_SLEEP                = _XL_FR_TRANSCEIVER_MODE_SLEEP
+XL_FR_TRANSCEIVER_MODE_NORMAL               = _XL_FR_TRANSCEIVER_MODE_NORMAL
+XL_FR_TRANSCEIVER_MODE_RECEIVE_ONLY         = _XL_FR_TRANSCEIVER_MODE_RECEIVE_ONLY
+XL_FR_TRANSCEIVER_MODE_STANDBY              = _XL_FR_TRANSCEIVER_MODE_STANDBY
